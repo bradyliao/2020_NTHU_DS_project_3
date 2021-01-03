@@ -471,7 +471,7 @@ int Process_Board::my_num_of_vulnerable_orbs(char myPlayerColor)
     if (depth == 0)
     {
         //cout << 3 ;
-        bm.score = currentBoard.my_total_orbs(player.get_color()) - currentBoard.my_total_orbs(opponentColor) ;
+        bm.score = currentBoard.my_total_orbs(player.get_color()) ;// - currentBoard.my_total_orbs(opponentColor) ;
         //cout << 5 ;
         return bm ;
     }
