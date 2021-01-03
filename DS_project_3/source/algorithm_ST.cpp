@@ -441,7 +441,7 @@ void Process_Board::my_print_current_board(){
     
     if (depth == 0)
     {
-        //cout << endl ;
+        //cout << 3 ;
         bm.score = currentBoard.my_total_orbs(player.get_color()) ;
         return bm ;
     }
@@ -453,7 +453,7 @@ void Process_Board::my_print_current_board(){
     
     if (player.get_color() == currentPlayerColor)
     {
-        cout << 1 << endl ;
+        //cout << 1 ;
         if (currentBoard.my_win_the_game(currentPlayerColor) && currentBoard.my_total_orbs(currentPlayerColor) > 1)
         {
             bm.score = INF ;
@@ -489,7 +489,7 @@ void Process_Board::my_print_current_board(){
     
     else
     {
-        cout << 2 << endl ;
+        //cout << 2 ;
         if (currentBoard.my_win_the_game(currentPlayerColor) && currentBoard.my_total_orbs(currentPlayerColor) > 1)
         {
             bm.score = -INF ;
