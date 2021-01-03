@@ -9,6 +9,8 @@ using namespace std;
 
 #define ROW 5
 #define COL 6
+#define INF 10000
+#define DEPTH 4
 
 /******************************************************
  * In your algorithm, you can just use the the funcitons
@@ -31,6 +33,19 @@ using namespace std;
 *************************************************************************/
 
 
+struct Move
+{
+    int score ;
+    int r ;
+    int c ;
+} ;
+
+
+
+
+
+
+
 class Process_Board{
     public:
     Cell cells[ROW][COL];                       // The 5*6 board whose index (0,0) is start from the upper left corner
@@ -51,6 +66,11 @@ class Process_Board{
     char get_cell_color(int i, int j);
     bool place_orb(int i, int j, Player* player);      // Use this function to place a orb into a cell
     bool win_the_game(Player player);                  // The function that is used to check wether the player wins the game after his/her placemnet operation
+    
+public:     // my own function
+    void my_place_orb(int i, int j, char currentPlayerColor) ;
+    void my_cell_chain_reaction(char currentPlayerColor) ;
+    bool my_win_the_game(char currentPlayerColor) ;
 };
 
 /*
@@ -106,6 +126,7 @@ bool Process_Board::place_orb(int i, int j, Player * player){
     return true;
 }
 
+
 bool Process_Board::cell_is_full(Cell* cell){
     if(cell->get_orbs_num() >= cell->get_capacity()){
         cell->set_explode(true);
@@ -114,6 +135,7 @@ bool Process_Board::cell_is_full(Cell* cell){
     else return false;
 }
 
+
 void Process_Board::add_orb(int i, int j, char color){
     int orb_num = cells[i][j].get_orbs_num();
     orb_num ++;
@@ -121,11 +143,13 @@ void Process_Board::add_orb(int i, int j, char color){
     cells[i][j].set_color(color);
 }
 
+
 void Process_Board::cell_reset(int i, int j){
     cells[i][j].set_orbs_num(0);
     cells[i][j].set_explode(false);
     cells[i][j].set_color('w');
 }
+
 
 void Process_Board::cell_explode(int i, int j){
 
@@ -163,6 +187,7 @@ void Process_Board::cell_explode(int i, int j){
     }
 }
 
+
 void Process_Board::cell_reaction_marker(){
 
     // Mark the next cell whose number of orbs is equal to the capacity
@@ -172,6 +197,7 @@ void Process_Board::cell_reaction_marker(){
             }
         }
 }
+
 
 void Process_Board::cell_chain_reaction(Player player){
     
@@ -198,6 +224,7 @@ void Process_Board::cell_chain_reaction(Player player){
     }
 }
 
+
 bool Process_Board::win_the_game(Player player){
 
     char player_color = player.get_color();
@@ -216,13 +243,16 @@ bool Process_Board::win_the_game(Player player){
     return win;
 }
 
+
 int Process_Board::get_orbs_num(int i, int j){
     return cells[i][j].get_orbs_num();
 }
 
+
 int Process_Board::get_capacity(int i, int j){
     return cells[i][j].get_capacity();
 }
+
 
 char Process_Board::get_cell_color(int i, int j){
     return cells[i][j].get_color();
@@ -236,10 +266,144 @@ char Process_Board::get_cell_color(int i, int j){
 
 
 
+// my own function
 
 
-void miniMax(Process_Board processBoard, int depth, Player player)
+void Process_Board::my_place_orb(int i, int j, char currentPlayerColor){
+    cells[i][j].set_orbs_num( cells[i][j].get_orbs_num()+1 ) ;
+
+    if(cell_is_full(&cells[i][j])){
+        cell_explode(i, j);
+        cell_reaction_marker();
+        cell_chain_reaction(currentPlayerColor);
+    }
+}
+
+
+void Process_Board::my_cell_chain_reaction(char currentPlayerColor){
+    
+    bool chain_reac = true;
+
+    while(chain_reac){
+
+        chain_reac = false;
+
+        for(int i = 0; i < ROW; i++){
+            for(int j = 0; j < COL; j++){
+                if(cells[i][j].get_explode()){
+                    cell_explode(i ,j);
+                    chain_reac = true;
+                }
+            }
+        }
+
+        if(win_the_game(currentPlayerColor)){
+            return;
+        }
+
+        cell_reaction_marker();
+    }
+}
+
+
+bool Process_Board::my_win_the_game(char currentPlayerColor){
+
+    
+    bool win = true;
+
+    for(int i = 0; i < ROW; i++){
+        for(int j = 0; j < COL; j++){
+            if(cells[i][j].get_color() == currentPlayerColor || cells[i][j].get_color() == 'w') continue;
+            else{
+                win = false;
+                break;
+            }
+        }
+        if(!win) break;
+    }
+    return win;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ Move miniMax(Process_Board currentBoard, int depth, Player player, char currentPlayerColor)
 {
+
+    char nextPlayerColor = (currentPlayerColor == 'r') ? 'b' : 'r';
+    Move bm ;
+    
+    
+    
+    if (player.get_color() == currentPlayerColor)
+    {
+        bm.score = -INF ;
+        for (int r = 0; r < ROW; r++)
+        {
+            for (int c = 0; r < COL; c++)
+            {
+                if (currentBoard.get_cell_color(r, c) == currentPlayerColor)
+                {
+                    Move cm ;
+                    cm.score = -INF ; cm.r = r ; cm.c = c ;
+                    
+                    Process_Board nextBoard(currentBoard) ;
+                    nextBoard.my_place_orb(r /*cm.r*/, c /*cm.c*/, currentPlayerColor) ;
+                    
+                    cm = miniMax(nextBoard, depth - 1, player, nextPlayerColor) ;
+                    
+                    if (cm.score > bm.score)
+                    {
+                        bm.r = r ; /*cm.r*/
+                        bm.c = c ; /*cm.c*/
+                    }
+                }
+            }
+        }
+        return bm ;
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     
     
     
@@ -302,6 +466,12 @@ void algorithm_A(Board board, Player player, int index[]){
 
     //your algorithm design//
     Process_Board processBoard(board) ;
+    Move bestMove = miniMax(processBoard, DEPTH, player, player.get_color()) ;
+    index[0] = bestMove.r ;
+    index[1] = bestMove.c ;
+    
+    
+    
     
 }
 

@@ -13,6 +13,7 @@
 		39E0EF3825A192D900F123A7 /* algorithm_TA.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 39E0EF3125A192D800F123A7 /* algorithm_TA.cpp */; };
 		39E0EF3925A192D900F123A7 /* algorithm_ST.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 39E0EF3325A192D800F123A7 /* algorithm_ST.cpp */; };
 		39E0EF3A25A192D900F123A7 /* chain_reaction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 39E0EF3425A192D800F123A7 /* chain_reaction.cpp */; };
+		39E0EF4225A196D600F123A7 /* algorithm_github.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 39E0EF4125A196D600F123A7 /* algorithm_github.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -40,6 +41,7 @@
 		39E0EF3D25A192E800F123A7 /* board.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = board.h; path = include/board.h; sourceTree = "<group>"; };
 		39E0EF3E25A192E800F123A7 /* algorithm.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = algorithm.h; path = include/algorithm.h; sourceTree = "<group>"; };
 		39E0EF3F25A192E800F123A7 /* player.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = player.h; path = include/player.h; sourceTree = "<group>"; };
+		39E0EF4125A196D600F123A7 /* algorithm_github.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = algorithm_github.cpp; path = source/algorithm_github.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -77,6 +79,7 @@
 				39E0EF3F25A192E800F123A7 /* player.h */,
 				39E0EF3C25A192E800F123A7 /* rules.h */,
 				39E0EF3225A192D800F123A7 /* a.out */,
+				39E0EF4125A196D600F123A7 /* algorithm_github.cpp */,
 				39E0EF3325A192D800F123A7 /* algorithm_ST.cpp */,
 				39E0EF3125A192D800F123A7 /* algorithm_TA.cpp */,
 				39E0EF2E25A192D800F123A7 /* board.cpp */,
@@ -148,6 +151,7 @@
 				39E0EF3525A192D800F123A7 /* board.cpp in Sources */,
 				39E0EF3625A192D800F123A7 /* rules.cpp in Sources */,
 				39E0EF3A25A192D900F123A7 /* chain_reaction.cpp in Sources */,
+				39E0EF4225A196D600F123A7 /* algorithm_github.cpp in Sources */,
 				39E0EF3725A192D900F123A7 /* player.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

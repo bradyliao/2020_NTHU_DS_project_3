@@ -227,7 +227,7 @@ std::pair<Grid, int> minimax(M_Board board, int depth, int breadth, Player playe
 
 void algorithm_A(Board board, Player player, int index[]){
     M_Board m_board(board);
-    pair <Grid, int> best_move = minimax(m_board, 2, 10, player);
+    pair <Grid, int> best_move = minimax(m_board, 2, 15, player);
     index[0] = best_move.first.x;
     index[1] = best_move.first.y;
 };
