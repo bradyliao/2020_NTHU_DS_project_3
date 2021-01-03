@@ -459,7 +459,6 @@ int Process_Board::my_num_of_vulnerable_orbs(char myPlayerColor)
 
  Move miniMax(Process_Board currentBoard, int depth, Player player, char currentPlayerColor)
 {
-    //currentBoard.my_print_current_board() ;
     
     char opponentColor = (player.get_color() == 'r') ? 'b' : 'r';
     char nextPlayerColor = (currentPlayerColor == 'r') ? 'b' : 'r';
@@ -471,7 +470,7 @@ int Process_Board::my_num_of_vulnerable_orbs(char myPlayerColor)
     if (depth == 0)
     {
         //cout << 3 ;
-        bm.score = currentBoard.my_total_orbs(player.get_color()) ;// - currentBoard.my_total_orbs(opponentColor) ;
+        bm.score = currentBoard.my_total_orbs(player.get_color()) - currentBoard.my_total_orbs(opponentColor) ;
         //cout << 5 ;
         return bm ;
     }
