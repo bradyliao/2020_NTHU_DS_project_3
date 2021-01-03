@@ -71,6 +71,8 @@ public:     // my own function
     void my_place_orb(int i, int j, char currentPlayerColor) ;
     void my_cell_chain_reaction(char currentPlayerColor) ;
     bool my_win_the_game(char currentPlayerColor) ;
+    int my_total_orbs(char currentPlayerColor) ;
+    void my_print_current_board() ;
 };
 
 /*
@@ -325,6 +327,75 @@ bool Process_Board::my_win_the_game(char currentPlayerColor){
 }
 
 
+int Process_Board::my_total_orbs(char currentPlayerColor)
+{
+    int count = 0 ;
+    
+    for(int i = 0; i < ROW; i++)
+        for(int j = 0; j < COL; j++)
+            if(cells[i][j].get_color() == currentPlayerColor)
+                count += cells[i][j].get_orbs_num() ;
+
+    return count ;
+}
+
+
+void Process_Board::my_print_current_board(){
+
+    int orb_num;
+    char symbol;
+
+
+
+    cout << "=============================================================" << endl;
+    for(int i = 0; i < ROW; i++){
+        for(int j = 0; j < COL; j++){
+
+            symbol = cells[i][j].get_color();
+            switch(symbol){
+                case 'r':
+                    symbol = 'O';
+                    break;
+                case 'b':
+                    symbol = 'X';
+                    break;
+                default:
+                    break;
+            }
+
+            orb_num = cells[i][j].get_orbs_num();
+            switch(orb_num){
+                case 0:
+                    cout << "|       | ";
+                    break;
+                case 1:
+                    cout << "|" << symbol << "      | ";
+                    break;
+                case 2:
+                    cout << "|" << symbol << symbol << "     | ";
+                    break;
+                case 3:
+                    cout << "|" << symbol << symbol << symbol << "    | ";
+                    break;
+                case 4:
+                    cout << "|" << symbol << symbol << symbol << symbol << "   | ";
+                    break;
+                case 5:
+                    cout << "|" << symbol << symbol << symbol << symbol << symbol << "  | ";
+                    break;
+                case 6:
+                    cout << "|" << symbol << symbol << symbol << symbol << symbol << symbol << " | ";
+                    break;
+                default:
+                    cout << "|" << symbol << symbol << symbol << symbol << symbol << symbol << symbol << "| ";
+                    break;
+
+            }
+        }
+        cout << endl;
+    }
+    cout << "=============================================================" << endl << endl;
+}
 
 
 
@@ -359,23 +430,45 @@ bool Process_Board::my_win_the_game(char currentPlayerColor){
 
  Move miniMax(Process_Board currentBoard, int depth, Player player, char currentPlayerColor)
 {
-
+    //currentBoard.my_print_current_board() ;
+    
+    
     char nextPlayerColor = (currentPlayerColor == 'r') ? 'b' : 'r';
     Move bm ;
+    bm.r = -1 ;
+    bm.c = -1 ;
+    
+    
+    if (depth == 0)
+    {
+        //cout << endl ;
+        bm.score = currentBoard.my_total_orbs(player.get_color()) ;
+        return bm ;
+    }
+    
+    
+    
     
     
     
     if (player.get_color() == currentPlayerColor)
     {
+        cout << 1 << endl ;
+        if (currentBoard.my_win_the_game(currentPlayerColor) && currentBoard.my_total_orbs(currentPlayerColor) > 1)
+        {
+            bm.score = INF ;
+            return bm ;
+        }
+        
         bm.score = -INF ;
         for (int r = 0; r < ROW; r++)
         {
-            for (int c = 0; r < COL; c++)
+            for (int c = 0; c < COL; c++)
             {
-                if (currentBoard.get_cell_color(r, c) == currentPlayerColor)
+                if (currentBoard.get_cell_color(r, c) != nextPlayerColor)
                 {
                     Move cm ;
-                    cm.score = -INF ; cm.r = r ; cm.c = c ;
+                    cm.score = -INF ; //cm.r = r ; cm.c = c ;
                     
                     Process_Board nextBoard(currentBoard) ;
                     nextBoard.my_place_orb(r /*cm.r*/, c /*cm.c*/, currentPlayerColor) ;
@@ -384,6 +477,7 @@ bool Process_Board::my_win_the_game(char currentPlayerColor){
                     
                     if (cm.score > bm.score)
                     {
+                        bm.score = cm.score ;
                         bm.r = r ; /*cm.r*/
                         bm.c = c ; /*cm.c*/
                     }
@@ -391,6 +485,46 @@ bool Process_Board::my_win_the_game(char currentPlayerColor){
             }
         }
         return bm ;
+    }
+    
+    else
+    {
+        cout << 2 << endl ;
+        if (currentBoard.my_win_the_game(currentPlayerColor) && currentBoard.my_total_orbs(currentPlayerColor) > 1)
+        {
+            bm.score = -INF ;
+            return bm ;
+        }
+        
+        bm.score = INF ;
+        for (int r = 0; r < ROW; r++)
+        {
+            for (int c = 0; c < COL; c++)
+            {
+                if (currentBoard.get_cell_color(r, c) != nextPlayerColor)
+                {
+                    Move cm ;
+                    cm.score = INF ;// cm.r = r ; cm.c = c ;
+                    
+                    Process_Board nextBoard(currentBoard) ;
+                    nextBoard.my_place_orb(r /*cm.r*/, c /*cm.c*/, currentPlayerColor) ;
+                    
+                    cm = miniMax(nextBoard, depth - 1, player, nextPlayerColor) ;
+                    
+                    if (cm.score < bm.score)
+                    {
+                        bm.score = cm.score ;
+                        bm.r = r ; /*cm.r*/
+                        bm.c = c ; /*cm.c*/
+                    }
+                }
+            }
+        }
+        return bm ;
+        
+        
+        
+        
     }
     
     
