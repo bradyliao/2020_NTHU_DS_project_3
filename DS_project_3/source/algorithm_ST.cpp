@@ -9,14 +9,14 @@ using namespace std;
 
 #define ROW 5
 #define COL 6
-#define INF 10000
-#define DEPTH 4
+#define INF 20000
+#define DEPTH 3
 
 /******************************************************
  * In your algorithm, you can just use the the funcitons
- * listed by TA to get the board information.(functions 
+ * listed by TA to get the board information.(functions
  * 1. ~ 4. are listed in next block)
- * 
+ *
  * The STL library functions is not allowed to use.
 ******************************************************/
 
@@ -25,7 +25,7 @@ using namespace std;
  * 2. int board.get_capacity(int row_index, int col_index)
  * 3. char board.get_cell_color(int row_index, int col_index)
  * 4. void board.print_current_board(int row_index, int col_index, int round)
- * 
+ *
  * 1. The function that return the number of orbs in cell(row, col)
  * 2. The function that return the orb capacity of the cell(row, col)
  * 3. The function that return the color fo the cell(row, col)
@@ -73,22 +73,20 @@ public:     // my own function
     bool my_win_the_game(char currentPlayerColor) ;
     int my_total_orbs(char currentPlayerColor) ;
     void my_print_current_board() ;
+    int my_num_of_vulnerable_orbs(char myPlayerColor) ;
 };
 
 /*
 Process_Board::Process_Board(){
-
     ////// Initialize the borad with correct capacity //////
     // The corners of the board
     cells[0][0].set_capacity(3), cells[0][5].set_capacity(3),
     cells[4][0].set_capacity(3), cells[4][5].set_capacity(3);
-
     // The edges of the board
     cells[0][1].set_capacity(5), cells[0][2].set_capacity(5), cells[0][3].set_capacity(5), cells[0][4].set_capacity(5),
     cells[1][0].set_capacity(5), cells[2][0].set_capacity(5), cells[3][0].set_capacity(5),
     cells[1][5].set_capacity(5), cells[2][5].set_capacity(5), cells[3][5].set_capacity(5),
     cells[4][1].set_capacity(5), cells[4][2].set_capacity(5), cells[4][3].set_capacity(5), cells[4][4].set_capacity(5);
-
 }
 */
 
@@ -399,6 +397,37 @@ void Process_Board::my_print_current_board(){
 
 
 
+int Process_Board::my_num_of_vulnerable_orbs(char myPlayerColor)
+{
+    char opponentColor = (myPlayerColor == 'r') ? 'b' : 'r';
+    int count = 0 ;
+    
+    for(int i = 0; i < ROW; i++)
+    {
+        for(int j = 0; j < COL; j++)
+        {
+            if(cells[i][j].get_color() == opponentColor && (cells[i][j].get_orbs_num()+1 == cells[i][j].get_capacity()))
+            {
+                for (int x = -1; x < 2; x++)
+                {
+                    for (int y = -1; y < 2; y++)
+                    {
+                        if (0 < i+x && i+x < ROW && 0 < j+y && j+y < COL && (i+x != 0 && j+y !=0))
+                        {
+                            if (cells[i+x][j+y].get_color() == myPlayerColor)
+                            {
+                                count += cells[i+x][j+y].get_orbs_num() ;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    return count ;
+}
+
 
 
 
@@ -432,7 +461,7 @@ void Process_Board::my_print_current_board(){
 {
     //currentBoard.my_print_current_board() ;
     
-    
+    char opponentColor = (player.get_color() == 'r') ? 'b' : 'r';
     char nextPlayerColor = (currentPlayerColor == 'r') ? 'b' : 'r';
     Move bm ;
     bm.r = -1 ;
@@ -442,7 +471,8 @@ void Process_Board::my_print_current_board(){
     if (depth == 0)
     {
         //cout << 3 ;
-        bm.score = currentBoard.my_total_orbs(player.get_color()) ;
+        bm.score = currentBoard.my_total_orbs(player.get_color()) - currentBoard.my_total_orbs(opponentColor) ;
+        //cout << 5 ;
         return bm ;
     }
     
@@ -608,7 +638,3 @@ void algorithm_A(Board board, Player player, int index[]){
     
     
 }
-
-
-
-
