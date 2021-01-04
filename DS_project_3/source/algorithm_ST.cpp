@@ -499,10 +499,10 @@ int Process_Board::my_num_of_vulnerable_orbs(char myPlayerColor)
         // check if me win the game
         if (currentBoard.my_win_the_game(currentPlayerColor) && currentBoard.my_total_orbs(currentPlayerColor) > 1)
         {
-            bm.score = INF ;
+            bm.score = currentBoard.my_total_orbs(player.get_color()) - currentBoard.my_total_orbs(opponentColor) ;
             return bm ;
         }
-        
+
         bm.score = -INF ;
         
         // testing every available spots for the best move
@@ -537,7 +537,7 @@ int Process_Board::my_num_of_vulnerable_orbs(char myPlayerColor)
         // check if opponent wins the game
         if (currentBoard.my_win_the_game(currentPlayerColor) && currentBoard.my_total_orbs(currentPlayerColor) > 1)
         {
-            bm.score = -INF ;
+            bm.score = currentBoard.my_total_orbs(player.get_color()) - currentBoard.my_total_orbs(opponentColor) ;
             return bm ;
         }
         
