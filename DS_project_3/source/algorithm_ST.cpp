@@ -49,10 +49,6 @@ struct Move
 
 
 
-
-
-
-
 class Process_Board{
     public:
     Cell cells[ROW][COL];                       // The 5*6 board whose index (0,0) is start from the upper left corner
@@ -65,7 +61,7 @@ class Process_Board{
 
     public:
     //Process_Board();
-    Process_Board(Board board) ;
+    
         
     // The basic functions of the Board
     int get_orbs_num(int i, int j);
@@ -75,14 +71,19 @@ class Process_Board{
     bool win_the_game(Player player);                  // The function that is used to check wether the player wins the game after his/her placemnet operation
     
 public:     // my own function
+    Process_Board(Board board) ; //copy board
     void my_place_orb(int i, int j, char currentPlayerColor) ;
     void my_cell_chain_reaction(char currentPlayerColor) ;
     bool my_win_the_game(char currentPlayerColor) ;
     int my_total_orbs(char currentPlayerColor) ;
-    void my_print_current_board() ;
-    int my_num_of_vulnerable_orbs(char myPlayerColor) ;
+    //void my_print_current_board() ;
+    //int my_num_of_vulnerable_orbs(char myPlayerColor) ;
 };
 
+
+
+
+//don't need it here
 /*
 Process_Board::Process_Board(){
     ////// Initialize the borad with correct capacity //////
@@ -96,6 +97,7 @@ Process_Board::Process_Board(){
     cells[4][1].set_capacity(5), cells[4][2].set_capacity(5), cells[4][3].set_capacity(5), cells[4][4].set_capacity(5);
 }
 */
+
 
 Process_Board::Process_Board(Board board)
 {
@@ -273,7 +275,7 @@ char Process_Board::get_cell_color(int i, int j){
 
 
 
-// my own function
+// my own functions
 
 
 void Process_Board::my_place_orb(int i, int j, char currentPlayerColor){
@@ -332,6 +334,7 @@ bool Process_Board::my_win_the_game(char currentPlayerColor){
 }
 
 
+// count total orbs for certain player
 int Process_Board::my_total_orbs(char currentPlayerColor)
 {
     int count = 0 ;
@@ -345,6 +348,9 @@ int Process_Board::my_total_orbs(char currentPlayerColor)
 }
 
 
+
+//testing purpose
+/*
 void Process_Board::my_print_current_board(){
 
     int orb_num;
@@ -401,9 +407,13 @@ void Process_Board::my_print_current_board(){
     }
     cout << "=============================================================" << endl << endl;
 }
+ 
+*/
+ 
+ 
 
-
-
+// testing purpose
+/*
 int Process_Board::my_num_of_vulnerable_orbs(char myPlayerColor)
 {
     char opponentColor = (myPlayerColor == 'r') ? 'b' : 'r';
@@ -434,7 +444,7 @@ int Process_Board::my_num_of_vulnerable_orbs(char myPlayerColor)
 
     return count ;
 }
-
+*/
 
 
 
@@ -450,24 +460,19 @@ int Process_Board::my_num_of_vulnerable_orbs(char myPlayerColor)
 
  Move miniMax(Process_Board currentBoard, int depth, Player player, char currentPlayerColor)
 {
-    
     char opponentColor = (player.get_color() == 'r') ? 'b' : 'r';
     char nextPlayerColor = (currentPlayerColor == 'r') ? 'b' : 'r';
-    //int currentR, currentC ;
     Move bm ;
     vector<Move> availableSpots ;
     
     
     if (depth == 0)
     {
-        //cout << 3 ;
         bm.score = currentBoard.my_total_orbs(player.get_color()) - currentBoard.my_total_orbs(opponentColor) ;
-        //cout << 5 ;
         return bm ;
     }
     
-    
-    
+
     
     //check available spots
     for (int r = 0; r < ROW; r++)
@@ -477,20 +482,21 @@ int Process_Board::my_num_of_vulnerable_orbs(char myPlayerColor)
             if (currentBoard.get_cell_color(r, c) != nextPlayerColor)
             {
                 Move cm ;
-                /*cm.score = -INF ;*/ cm.r = r ; cm.c = c ;
+                cm.r = r ; cm.c = c ;
                 availableSpots.push_back(cm) ;
             }
         }
     }
     
+    
+    
     shuffle (availableSpots.begin(), availableSpots.end(), default_random_engine(seed));
-     
     
     
-    
+    // Maximizing
     if (player.get_color() == currentPlayerColor)
     {
-        //cout << 1 ;
+        // check if me win the game
         if (currentBoard.my_win_the_game(currentPlayerColor) && currentBoard.my_total_orbs(currentPlayerColor) > 1)
         {
             bm.score = INF ;
@@ -499,18 +505,20 @@ int Process_Board::my_num_of_vulnerable_orbs(char myPlayerColor)
         
         bm.score = -INF ;
         
-        
+        // testing every available spots for the best move
         for (int i = 0; i < availableSpots.size(); i++)
         {
             Move cm ;
             cm.score = -INF ; cm.r = availableSpots[i].r ; cm.c = availableSpots[i].c ;
             
-            
+            //create (copy) new board and place the orb in it
             Process_Board nextBoard(currentBoard) ;
             nextBoard.my_place_orb(cm.r, cm.c, currentPlayerColor) ;
-            
+
+            //recursion for miniMax
             cm = miniMax(nextBoard, depth - 1, player, nextPlayerColor) ;
             
+            // find the best score (best move)
             if (cm.score > bm.score)
             {
                 bm.score = cm.score ;
@@ -518,16 +526,15 @@ int Process_Board::my_num_of_vulnerable_orbs(char myPlayerColor)
                 bm.c = availableSpots[i].c ;
             }
         }
-                    
-                    
-               
-
+        
+        // return best move
         return bm ;
     }
     
+    // minimizing
     else
     {
-        //cout << 2 ;
+        // check if opponent wins the game
         if (currentBoard.my_win_the_game(currentPlayerColor) && currentBoard.my_total_orbs(currentPlayerColor) > 1)
         {
             bm.score = -INF ;
@@ -536,18 +543,20 @@ int Process_Board::my_num_of_vulnerable_orbs(char myPlayerColor)
         
         bm.score = INF ;
         
-        
+        // testing every available spots for the best move
         for (int i = 0; i < availableSpots.size(); i++)
         {
             Move cm ;
             cm.score = INF ; cm.r = availableSpots[i].r ; cm.c = availableSpots[i].c ;
             
-            
+            //create (copy) new board and place the orb in it
             Process_Board nextBoard(currentBoard) ;
             nextBoard.my_place_orb(cm.r, cm.c, currentPlayerColor) ;
             
+            //recursion for miniMax
             cm = miniMax(nextBoard, depth - 1, player, nextPlayerColor) ;
             
+            // find the best score (best move)
             if (cm.score < bm.score)
             {
                 bm.score = cm.score ;
@@ -556,72 +565,26 @@ int Process_Board::my_num_of_vulnerable_orbs(char myPlayerColor)
             }
         }
         
+        // return best move
         return bm ;
-        
     }
-
     
-    
+    // end of miniMax
 }
 
  
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-void algorithm_A(Board board, Player player, int index[]){
-
+void algorithm_A(Board board, Player player, int index[])
+{
     //your algorithm design//
+    
+    //create (copy) new board
     Process_Board processBoard(board) ;
+    
+    //pass the duplicated board into miniMax and get best move back
     Move bestMove = miniMax(processBoard, DEPTH, player, player.get_color()) ;
+    
+    // return best move
     index[0] = bestMove.r ;
     index[1] = bestMove.c ;
-    
-    
-    
-    
 }
