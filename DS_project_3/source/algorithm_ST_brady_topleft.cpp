@@ -1,12 +1,9 @@
 #include <iostream>
 #include <stdlib.h>
 #include <time.h>
-#include <algorithm>    // std::shuffle
-#include <vector>        // std::array
-#include <random>       // std::default_random_engine
-#include <chrono>       // std::chrono::system_clock
 #include "../include/algorithm.h"
 #include "../include/rules.h"
+
 
 
 using namespace std;
@@ -36,9 +33,6 @@ using namespace std;
  * 4. The function that print out the current board statement
 *************************************************************************/
 
-unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
-
-
 
 struct Move
 {
@@ -46,10 +40,6 @@ struct Move
     int r ;
     int c ;
 } ;
-
-
-
-
 
 
 
@@ -96,6 +86,8 @@ Process_Board::Process_Board(){
     cells[4][1].set_capacity(5), cells[4][2].set_capacity(5), cells[4][3].set_capacity(5), cells[4][4].set_capacity(5);
 }
 */
+
+
 
 Process_Board::Process_Board(Board board)
 {
@@ -453,9 +445,9 @@ int Process_Board::my_num_of_vulnerable_orbs(char myPlayerColor)
     
     char opponentColor = (player.get_color() == 'r') ? 'b' : 'r';
     char nextPlayerColor = (currentPlayerColor == 'r') ? 'b' : 'r';
-    //int currentR, currentC ;
     Move bm ;
-    vector<Move> availableSpots ;
+    bm.r = -1 ;
+    bm.c = -1 ;
     
     
     if (depth == 0)
@@ -467,23 +459,6 @@ int Process_Board::my_num_of_vulnerable_orbs(char myPlayerColor)
     }
     
     
-    
-    
-    //check available spots
-    for (int r = 0; r < ROW; r++)
-    {
-        for (int c = 0; c < COL; c++)
-        {
-            if (currentBoard.get_cell_color(r, c) != nextPlayerColor)
-            {
-                Move cm ;
-                /*cm.score = -INF ;*/ cm.r = r ; cm.c = c ;
-                availableSpots.push_back(cm) ;
-            }
-        }
-    }
-    
-    shuffle (availableSpots.begin(), availableSpots.end(), default_random_engine(seed));
      
     
     
@@ -498,30 +473,29 @@ int Process_Board::my_num_of_vulnerable_orbs(char myPlayerColor)
         }
         
         bm.score = -INF ;
-        
-        
-        for (int i = 0; i < availableSpots.size(); i++)
+        for (int r = 0; r < ROW; r++)
         {
-            Move cm ;
-            cm.score = -INF ; cm.r = availableSpots[i].r ; cm.c = availableSpots[i].c ;
-            
-            
-            Process_Board nextBoard(currentBoard) ;
-            nextBoard.my_place_orb(cm.r, cm.c, currentPlayerColor) ;
-            
-            cm = miniMax(nextBoard, depth - 1, player, nextPlayerColor) ;
-            
-            if (cm.score > bm.score)
+            for (int c = 0; c < COL; c++)
             {
-                bm.score = cm.score ;
-                bm.r = availableSpots[i].r ;
-                bm.c = availableSpots[i].c ;
+                if (currentBoard.get_cell_color(r, c) != nextPlayerColor)
+                {
+                    Move cm ;
+                    cm.score = -INF ; //cm.r = r ; cm.c = c ;
+                    
+                    Process_Board nextBoard(currentBoard) ;
+                    nextBoard.my_place_orb(r /*cm.r*/, c /*cm.c*/, currentPlayerColor) ;
+                    
+                    cm = miniMax(nextBoard, depth - 1, player, nextPlayerColor) ;
+                    
+                    if (cm.score > bm.score)
+                    {
+                        bm.score = cm.score ;
+                        bm.r = r ; /*cm.r*/
+                        bm.c = c ; /*cm.c*/
+                    }
+                }
             }
         }
-                    
-                    
-               
-
         return bm ;
     }
     
@@ -535,27 +509,29 @@ int Process_Board::my_num_of_vulnerable_orbs(char myPlayerColor)
         }
         
         bm.score = INF ;
-        
-        
-        for (int i = 0; i < availableSpots.size(); i++)
+        for (int r = 0; r < ROW; r++)
         {
-            Move cm ;
-            cm.score = INF ; cm.r = availableSpots[i].r ; cm.c = availableSpots[i].c ;
-            
-            
-            Process_Board nextBoard(currentBoard) ;
-            nextBoard.my_place_orb(cm.r, cm.c, currentPlayerColor) ;
-            
-            cm = miniMax(nextBoard, depth - 1, player, nextPlayerColor) ;
-            
-            if (cm.score < bm.score)
+            for (int c = 0; c < COL; c++)
             {
-                bm.score = cm.score ;
-                bm.r = availableSpots[i].r ;
-                bm.c = availableSpots[i].c ;
+                if (currentBoard.get_cell_color(r, c) != nextPlayerColor)
+                {
+                    Move cm ;
+                    cm.score = INF ;// cm.r = r ; cm.c = c ;
+                    
+                    Process_Board nextBoard(currentBoard) ;
+                    nextBoard.my_place_orb(r /*cm.r*/, c /*cm.c*/, currentPlayerColor) ;
+                    
+                    cm = miniMax(nextBoard, depth - 1, player, nextPlayerColor) ;
+                    
+                    if (cm.score < bm.score)
+                    {
+                        bm.score = cm.score ;
+                        bm.r = r ; /*cm.r*/
+                        bm.c = c ; /*cm.c*/
+                    }
+                }
             }
         }
-        
         return bm ;
         
     }

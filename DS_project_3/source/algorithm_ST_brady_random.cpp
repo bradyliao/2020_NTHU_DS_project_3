@@ -491,12 +491,13 @@ int Process_Board::my_num_of_vulnerable_orbs(char myPlayerColor)
     if (player.get_color() == currentPlayerColor)
     {
         //cout << 1 ;
+        /*
         if (currentBoard.my_win_the_game(currentPlayerColor) && currentBoard.my_total_orbs(currentPlayerColor) > 1)
         {
             bm.score = INF ;
             return bm ;
         }
-        
+        */
         bm.score = -INF ;
         
         
@@ -528,12 +529,13 @@ int Process_Board::my_num_of_vulnerable_orbs(char myPlayerColor)
     else
     {
         //cout << 2 ;
+        /*
         if (currentBoard.my_win_the_game(currentPlayerColor) && currentBoard.my_total_orbs(currentPlayerColor) > 1)
         {
             bm.score = -INF ;
             return bm ;
         }
-        
+        */
         bm.score = INF ;
         
         
