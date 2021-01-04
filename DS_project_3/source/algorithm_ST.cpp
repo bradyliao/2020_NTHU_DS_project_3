@@ -441,22 +441,6 @@ int Process_Board::my_num_of_vulnerable_orbs(char myPlayerColor)
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
  Move miniMax(Process_Board currentBoard, int depth, Player player, char currentPlayerColor)
 {
     
@@ -551,27 +535,8 @@ int Process_Board::my_num_of_vulnerable_orbs(char myPlayerColor)
         }
         return bm ;
         
-        
-        
-        
     }
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+
     
     
 }
